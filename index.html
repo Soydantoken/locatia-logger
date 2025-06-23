@@ -1,15 +1,23 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
   <title>Dedectico - GPS Zorunlu Takip</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .container { max-width: 600px; margin-top: 80px; text-align: center; }
+    pre { background-color: #fff; padding: 1rem; border: 1px solid #ddd; border-radius: 5px; text-align: left; }
+  </style>
 </head>
 <body>
-  <h2>Dedectico | GPS Zorunlu Takip Sistemi</h2>
-  <p>Konum izni verilmeden bu sistem çalışmaz.</p>
-  <button onclick="getLocation()">Konumu Paylaş</button>
-  <pre id="output">Henüz bir konum alınmadı.</pre>
+  <div class="container">
+    <h2 class="mb-4">Dedectico | GPS Zorunlu Takip Sistemi</h2>
+    <p class="mb-3">Konum izni verilmeden bu sistem çalışmaz.</p>
+    <button class="btn btn-primary mb-3" onclick="getLocation()">Konumu Paylaş</button>
+    <pre id="output">Henüz bir konum alınmadı.</pre>
+  </div>
 
   <script>
     async function getLocation() {
@@ -17,16 +25,13 @@
         alert("Tarayıcınız konum özelliğini desteklemiyor.");
         return;
       }
-
       navigator.geolocation.getCurrentPosition(async (position) => {
         const coords = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         };
-
         const res = await fetch("https://ipinfo.io/json?token=<your_token>");
         const ipData = await res.json();
-
         const data = {
           Koordinatlar: coords,
           IP: ipData.ip,
@@ -36,15 +41,12 @@
           Sağlayıcı: ipData.org,
           Zaman: new Date().toLocaleString()
         };
-
         document.getElementById("output").textContent = JSON.stringify(data, null, 2);
-
         await fetch("/log", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data)
         });
-
       }, () => {
         alert("Konum izni verilmedi. Sistem çalıştırılamaz.");
       });
